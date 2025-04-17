@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: matchdaybot
+  labels:
+    app: matchdaybot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: matchdaybot
+  template:
+    metadata:
+      labels:
+        app: matchdaybot
+    spec:
+      containers:
+        - name: matchdaybot
+          image: ghcr.io/enesaslnts/matchdaybot-with-trivy-output:latest
+          env:
+            - name: DISCORD_WEBHOOK_URL
+              valueFrom:
+                secretKeyRef:
+                  name: matchdaybot-secret
+                  key: DISCORD_WEBHOOK_URL
+            - name: DEEPSEEK_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: matchdaybot-secret
+                  key: DEEPSEEK_API_KEY
+            - name: MODEL_HUMOR_PATH1
+              value: "model_prompt.md"
