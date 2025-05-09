@@ -6,15 +6,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from app.discord_webhook import send_discord_message
-from app.deepseek_prompt import load_prompt
+from app.deepseek_prompt import load_prompt, erklaere_cve, client
 from app.trivy_parser import extract_vulnerabilities
-from openai import OpenAI
-
-# Initialisiere DeepSeek
-client = OpenAI(
-    api_key=os.getenv("DEEPSEEK_API_KEY"),
-    base_url="https://api.deepseek.com"
-)
 
 def run_trivy_scan():
     try:
@@ -47,7 +40,6 @@ Hier sind die Daten:
 
 def analyse_and_send():
     try:
-        # Optional: führe Trivy aus, wenn Datei nicht existiert
         if not os.path.exists("trivy_output.json"):
             run_trivy_scan()
 
@@ -75,5 +67,17 @@ def analyse_and_send():
     except Exception as e:
         send_discord_message(f"❌ Fehler bei der Spielanalyse: {str(e)}")
 
+def handle_custom_command(message_content: str):
+    if message_content.startswith("/erkläre"):
+        try:
+            cve_id = message_content.split(" ")[1].strip()
+            antwort = erklaere_cve(cve_id)
+            send_discord_message(f"🛡️ Erklärung für **{cve_id}**:\n\n{antwort}")
+        except Exception as e:
+            send_discord_message(f"⚠️ Fehler: {str(e)}")
+
 if __name__ == "__main__":
     analyse_and_send()
+
+    # Optional testen
+    # handle_custom_command("/erkläre CVE-2023-45853")
