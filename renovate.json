@@ -1,0 +1,15 @@
+{
+    "extends": ["config:base"],
+    "labels": ["dependencies"],
+    "packageRules": [
+      {
+        "matchManagers": ["pip_requirements"],
+        "groupName": "Python dependencies"
+      },
+      {
+        "matchManagers": ["dockerfile"],
+        "groupName": "Docker base image"
+      }
+    ]
+  }
+  
