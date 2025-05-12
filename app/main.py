@@ -44,9 +44,11 @@ Hier sind die Daten:
 
 def analyse_and_send() -> str:
     try:
-        # Immer einen frischen Scan ausführen:
-        run_trivy_scan()
+        # Immer neu scannen: Alte Ergebnisse löschen
+        if os.path.exists("trivy_output.json"):
+            os.remove("trivy_output.json")
 
+        run_trivy_scan()
         vulnerabilities = extract_vulnerabilities()
 
         if not vulnerabilities:
@@ -77,6 +79,7 @@ def analyse_and_send() -> str:
         print(msg)
         send_discord_message(msg)
         return msg
+
 
 
 def handle_custom_command(message_content: str):
