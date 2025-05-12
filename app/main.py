@@ -11,18 +11,24 @@ from app.trivy_parser import extract_vulnerabilities
 
 def run_trivy_scan():
     try:
-        print("🚀 Starte lokalen Trivy-Scan...")
+        print("🚀 Starte Trivy-Scan des Docker-Images...")
         subprocess.run(
-            ["trivy", "fs", ".", "--severity", "HIGH,CRITICAL", "--format", "json", "--output", "trivy_output.json"],
+            [
+                "trivy", "image", "--severity", "HIGH,CRITICAL",
+                "--format", "json", 
+                "--output", "trivy_output.json",
+                "ghcr.io/enesaslnts/matchdaybot:latest"
+            ],
             check=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True
         )
-        print("✅ Trivy-Scan abgeschlossen.")
+        print("✅ Trivy-Image-Scan abgeschlossen.")
     except subprocess.CalledProcessError as e:
         send_discord_message(f"❌ Fehler beim Trivy-Scan:\n```\n{e.stderr.strip()}\n```")
         raise
+
 
 def build_prompt(template, vulnerabilities):
     return f"""
@@ -40,8 +46,7 @@ Hier sind die Daten:
 
 def analyse_and_send(discord_output: bool = True) -> str:
     try:
-        if not os.path.exists("trivy_output.json"):
-            run_trivy_scan()
+        run_trivy_scan()
 
         vulnerabilities = extract_vulnerabilities()
 
