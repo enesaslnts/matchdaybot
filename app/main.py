@@ -38,7 +38,7 @@ Hier sind die Daten:
 {json.dumps(vulnerabilities[:5], indent=2)}
 """
 
-def analyse_and_send():
+def analyse_and_send(discord_output: bool = True) -> str:
     try:
         if not os.path.exists("trivy_output.json"):
             run_trivy_scan()
@@ -46,8 +46,11 @@ def analyse_and_send():
         vulnerabilities = extract_vulnerabilities()
 
         if not vulnerabilities:
-            send_discord_message("✅ Kein Foulspiel entdeckt. Die Abwehr steht – saubere Leistung! 🧤⚽")
-            return
+            msg = "✅ Kein Foulspiel entdeckt. Die Abwehr steht – saubere Leistung! 🧤⚽"
+            print(msg)
+            if discord_output:
+                send_discord_message(msg)
+            return msg
 
         humor_template = load_prompt()
         prompt = build_prompt(humor_template, vulnerabilities)
@@ -62,10 +65,17 @@ def analyse_and_send():
         if not result:
             result = "⚠️ Analyse leer – vielleicht war das nur ein Freundschaftsspiel."
 
-        send_discord_message(result)
+        print("📝 Analyse erfolgreich abgeschlossen.")
+        if discord_output:
+            send_discord_message(result)
+        return result
 
     except Exception as e:
-        send_discord_message(f"❌ Fehler bei der Spielanalyse: {str(e)}")
+        msg = f"❌ Fehler bei der Spielanalyse: {str(e)}"
+        print(msg)
+        if discord_output:
+            send_discord_message(msg)
+        return msg
 
 def handle_custom_command(message_content: str):
     if message_content.startswith("/erkläre"):
@@ -78,6 +88,3 @@ def handle_custom_command(message_content: str):
 
 if __name__ == "__main__":
     analyse_and_send()
-
-    # Optional testen
-    # handle_custom_command("/erkläre CVE-2023-45853")
