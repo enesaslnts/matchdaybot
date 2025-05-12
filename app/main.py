@@ -93,3 +93,4 @@ def handle_custom_command(message_content: str):
 
 if __name__ == "__main__":
     analyse_and_send()
+    
