@@ -12,10 +12,6 @@ from app.trivy_parser import extract_vulnerabilities
 def run_trivy_scan():
     try:
         print("🚀 Starte lokalen Trivy-Scan...")
-        # Alte Datei löschen, falls vorhanden
-        if os.path.exists("trivy_output.json"):
-            os.remove("trivy_output.json")
-
         subprocess.run(
             ["trivy", "fs", ".", "--severity", "HIGH,CRITICAL", "--format", "json", "--output", "trivy_output.json"],
             check=True,
@@ -42,20 +38,16 @@ Hier sind die Daten:
 {json.dumps(vulnerabilities[:5], indent=2)}
 """
 
-def analyse_and_send() -> str:
+def analyse_and_send():
     try:
-        # Immer neu scannen: Alte Ergebnisse löschen
-        if os.path.exists("trivy_output.json"):
-            os.remove("trivy_output.json")
+        if not os.path.exists("trivy_output.json"):
+            run_trivy_scan()
 
-        run_trivy_scan()
         vulnerabilities = extract_vulnerabilities()
 
         if not vulnerabilities:
-            msg = "✅ Kein Foulspiel entdeckt. Die Abwehr steht – saubere Leistung! 🧤⚽"
-            print(msg)
-            send_discord_message(msg)
-            return msg
+            send_discord_message("✅ Kein Foulspiel entdeckt. Die Abwehr steht – saubere Leistung! 🧤⚽")
+            return
 
         humor_template = load_prompt()
         prompt = build_prompt(humor_template, vulnerabilities)
@@ -70,17 +62,10 @@ def analyse_and_send() -> str:
         if not result:
             result = "⚠️ Analyse leer – vielleicht war das nur ein Freundschaftsspiel."
 
-        print("📝 Analyse erfolgreich abgeschlossen.")
         send_discord_message(result)
-        return result
 
     except Exception as e:
-        msg = f"❌ Fehler bei der Spielanalyse: {str(e)}"
-        print(msg)
-        send_discord_message(msg)
-        return msg
-
-
+        send_discord_message(f"❌ Fehler bei der Spielanalyse: {str(e)}")
 
 def handle_custom_command(message_content: str):
     if message_content.startswith("/erkläre"):
@@ -93,3 +78,6 @@ def handle_custom_command(message_content: str):
 
 if __name__ == "__main__":
     analyse_and_send()
+
+    # Optional testen
+    # handle_custom_command("/erkläre CVE-2023-45853")
