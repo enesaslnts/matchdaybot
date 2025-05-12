@@ -44,7 +44,8 @@ Hier sind die Daten:
 
 def analyse_and_send() -> str:
     try:
-        run_trivy_scan()  # ← immer neu scannen
+        # Immer einen frischen Scan ausführen:
+        run_trivy_scan()
 
         vulnerabilities = extract_vulnerabilities()
 
@@ -76,6 +77,7 @@ def analyse_and_send() -> str:
         print(msg)
         send_discord_message(msg)
         return msg
+
 
 def handle_custom_command(message_content: str):
     if message_content.startswith("/erkläre"):
