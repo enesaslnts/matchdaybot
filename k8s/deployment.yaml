@@ -19,6 +19,7 @@ spec:
       containers:
         - name: matchdaybot
           image: ghcr.io/enesaslnts/matchdaybot:latest
+          imagePullPolicy: Always
           env:
             - name: DISCORD_WEBHOOK_URL
               valueFrom:
