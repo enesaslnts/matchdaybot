@@ -2,8 +2,8 @@ import os
 import discord
 import asyncio
 from dotenv import load_dotenv
-from app.deepseek_prompt import erklaere_cve
-from app.main import analyse_and_send, run_trivy_scan
+from deepseek_prompt import erklaere_cve
+from main import analyse_and_send, run_trivy_scan
 
 load_dotenv()
 

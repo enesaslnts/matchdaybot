@@ -5,9 +5,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from app.discord_webhook import send_discord_message
-from app.deepseek_prompt import load_prompt, erklaere_cve, client
-from app.trivy_parser import extract_vulnerabilities
+from discord_webhook import send_discord_message
+from deepseek_prompt import load_prompt, erklaere_cve, client
+from trivy_parser import extract_vulnerabilities
 
 def run_trivy_scan():
     try:
