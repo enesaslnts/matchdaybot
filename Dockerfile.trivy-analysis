@@ -9,4 +9,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Optional: nur wenn du statisch was mitliefern willst
 COPY trivy_output.json /app/trivy_output.json
 
-CMD ["python", "main.py"]
+CMD ["python", "app/main.py"]
