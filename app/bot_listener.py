@@ -4,6 +4,8 @@ import asyncio
 from dotenv import load_dotenv
 from deepseek_prompt import erklaere_cve
 from main import analyse_and_send, run_trivy_scan
+from discord_webhook import send_discord_message
+
 
 load_dotenv()
 
@@ -49,7 +51,9 @@ async def handle_scan_command(message):
         result = await loop.run_in_executor(None, analyse_and_send)
 
         if result:
-            await message.channel.send(result)
+            print(f"📏 Nachricht enthält {len(result)} Zeichen")
+            send_discord_message(result)
+            await message.channel.send("📬 Ergebnis wurde über Webhook gesendet.")
         else:
             await message.channel.send("✅ Analyse abgeschlossen – Ergebnis wurde gesendet.")
     except Exception as e:
